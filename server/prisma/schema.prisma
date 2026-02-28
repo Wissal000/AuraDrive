@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CarCategory {
+  SEDAN
+  SUV
+  HATCHBACK
+  CONVERTIBLE
+  COUPE
+  MINIVAN
+  PICKUP
+}
+
+enum TransmissionType {
+  AUTOMATIC
+  MANUAL
+}
+
+enum FuelType {
+  GASOLINE
+  DIESEL
+  ELECTRIC
+  HYBRID
+}
+
+enum CarStatus {
+  AVAILABLE
+  RENTED
+  MAINTENANCE
+  RESERVED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Car {
+  id              String           @id @default(uuid())
+  plateNumber     String           @unique
+  brand           String
+  model           String
+  year            Int
+  seats           Int
+  pricePerDay     Int
+  color           String
+  mileage         Int
+  airConditioning Boolean          @default(true)
+  category        CarCategory
+  transmission    TransmissionType
+  fuelType        FuelType
+  status          CarStatus        @default(AVAILABLE)
+  isAvailable     Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  images CarImage[]
+  bookings Booking[]
+}
+
+model CarImage {
+  id        String   @id @default(uuid())
+  url       String
+  car       Car      @relation(fields: [carId], references: [id])
+  carId     String
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id            String   @id @default(uuid())
+  customerName  String
+  customerEmail String
+  customerPhone String
+  startDate     DateTime
+  endDate       DateTime
+  totalPrice    Int
+  status        BookingStatus   @default(PENDING)
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  // Relation to Car
+  car      Car    @relation(fields: [carId], references: [id])
+  carId    String
+
+  @@index([carId])
+}

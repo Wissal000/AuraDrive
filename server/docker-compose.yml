@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9100:9000"        # MinIO API
+      - "9101:9001"        # MinIO console
+    environment:
+      MINIO_ROOT_USER: BestDrive
+      MINIO_ROOT_PASSWORD: admin123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+
+volumes:
+  minio_data:
