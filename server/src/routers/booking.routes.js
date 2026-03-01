@@ -7,5 +7,7 @@ const router = express.Router();
 router.post("/", bookingController.createBooking);
 // Get all bookings
 router.get("/", bookingController.getAllBookings);
+//update booking status
+router.patch("/:id/status", bookingController.updateBookingStatus);
 
 export default router;

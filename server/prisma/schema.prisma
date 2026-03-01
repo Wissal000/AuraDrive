@@ -87,7 +87,7 @@ model Booking {
   customerPhone String
   startDate     DateTime
   endDate       DateTime
-  totalPrice    Int
+  pricePerDay   Int
   status        BookingStatus   @default(PENDING)
   notes         String?
   createdAt     DateTime        @default(now())

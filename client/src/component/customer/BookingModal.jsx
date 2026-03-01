@@ -19,7 +19,7 @@ export default function BookingModal({ car, isBookingOpen, onClose }) {
         body: JSON.stringify({
           ...bookingData,
           carId: car.id,
-          totalPrice: car.pricePerDay,
+          pricePerDay: car.pricePerDay,
         }),
       });
       if (res.ok) {
