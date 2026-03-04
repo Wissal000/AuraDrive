@@ -1,11 +1,19 @@
 import { useRef, useState } from "react";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CreateCarForm() {
   const fileInputRef = useRef(null);
-
   const [loading, setLoading] = useState(false);
-
   const [form, setForm] = useState({
     plateNumber: "",
     brand: "",
@@ -19,44 +27,68 @@ export default function CreateCarForm() {
     transmission: "AUTOMATIC",
     fuelType: "GASOLINE",
     status: "AVAILABLE",
+    airConditioning: true,
   });
-
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (name, value) =>
     setForm((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleFiles = (e) => {
     const selected = Array.from(e.target.files || []);
     if (!selected.length) return;
-
     const remaining = 5 - images.length;
     if (remaining <= 0) return;
 
     const files = selected.slice(0, remaining);
-
     const previews = files.map((file) => URL.createObjectURL(file));
-
     setImages((prev) => [...prev, ...files]);
     setPreviewUrls((prev) => [...prev, ...previews]);
   };
 
   const handleRemoveImage = (index) => {
-    setPreviewUrls((prev) => {
-      URL.revokeObjectURL(prev[index]);
-      return prev.filter((_, i) => i !== index);
+    URL.revokeObjectURL(previewUrls[index]);
+    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const toggleBoolean = (name) =>
+    setForm((prev) => ({ ...prev, [name]: !prev[name] }));
+
+  const requiredFields = [
+    "plateNumber",
+    "brand",
+    "model",
+    "year",
+    "seats",
+    "pricePerDay",
+    "mileage",
+    "category",
+    "transmission",
+    "fuelType",
+    "status",
+  ];
+
+  const validateForm = () => {
+    const missing = requiredFields.filter((f) => {
+      const v = form[f];
+      return v === undefined || v === null || String(v).trim() === "";
     });
 
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    return missing;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (loading) return;
+
+    const missing = validateForm();
+
+    if (missing.length > 0) {
+      alert("Please fill all required fields\n");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -67,19 +99,13 @@ export default function CreateCarForm() {
         formData.append(key, value);
       });
 
-      images.forEach((img) => {
-        formData.append("image", img);
-      });
+      images.forEach((img) => formData.append("image", img));
 
-      const res = await axios.post("http://localhost:8000/api/cars", formData);
+      await axios.post("http://localhost:8000/api/cars", formData);
 
       alert("Car created successfully!");
-      console.log(res.data);
 
-      // cleanup previews
-      previewUrls.forEach((url) => URL.revokeObjectURL(url));
-
-      // reset
+      // reset form
       setForm({
         plateNumber: "",
         brand: "",
@@ -93,14 +119,13 @@ export default function CreateCarForm() {
         transmission: "AUTOMATIC",
         fuelType: "GASOLINE",
         status: "AVAILABLE",
+        airConditioning: true,
       });
 
       setImages([]);
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
       setPreviewUrls([]);
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       console.error(err);
       alert("Failed to create car. See console for details.");
@@ -110,149 +135,52 @@ export default function CreateCarForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="
-        max-w-2xl mx-auto
-        rounded-[32px]
-        bg-white/5
-        backdrop-blur-2xl
-        p-8 space-y-8 mt-16
-        shadow-[0_20px_60px_rgba(0,0,0,0.45)]
-      "
-    >
-      <h2 className="text-3xl font-extrabold text-white text-center mb-6 tracking-tight font-serif">
-        Add a New Car
-      </h2>
+    <div className="flex justify-center py-10 px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-2xl bg-black rounded-xl border p-6 space-y-6"
+      >
+        <h2 className="text-xl font-semibold text-white text-center">
+          Add new car
+        </h2>
 
-      {/* Car Basic Info */}
-      <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-[#C8A78E] font-mono">
-          Basic Info
-        </h3>
+        {/* Basic info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            "plateNumber",
+            "brand",
+            "model",
+            "year",
+            "seats",
+            "pricePerDay",
+            "color",
+            "mileage",
+          ].map((key) => (
+            <div key={key} className="space-y-1">
+              <Label className="text-sm text-gray-600">
+                {key.replace(/([A-Z])/g, " $1")}
+              </Label>
 
-        <input
-          name="plateNumber"
-          placeholder="Plate Number"
-          value={form.plateNumber}
-          onChange={handleChange}
-          required
-          className="
-            w-full rounded-2xl
-            bg-white/5 backdrop-blur-xl
-            px-4 py-3
-            text-white placeholder-zinc-400
-            shadow-[0_8px_30px_rgba(0,0,0,0.25)]
-            focus:outline-none
-            focus:ring-1 focus:ring-[#C8A78E]/40
-            hover:bg-white/10
-            transition-all
-          "
-        />
-
-        <input
-          name="brand"
-          placeholder="Brand"
-          value={form.brand}
-          onChange={handleChange}
-          required
-          className="
-            w-full rounded-2xl
-            bg-white/5 backdrop-blur-xl
-            px-4 py-3
-            text-white placeholder-zinc-400
-            shadow-[0_8px_30px_rgba(0,0,0,0.25)]
-            focus:outline-none
-            focus:ring-1 focus:ring-[#C8A78E]/40
-            hover:bg-white/10
-            transition-all
-          "
-        />
-
-        <input
-          name="model"
-          placeholder="Model"
-          value={form.model}
-          onChange={handleChange}
-          required
-          className="
-            w-full rounded-2xl
-            bg-white/5 backdrop-blur-xl
-            px-4 py-3
-            text-white placeholder-zinc-400
-            shadow-[0_8px_30px_rgba(0,0,0,0.25)]
-            focus:outline-none
-            focus:ring-1 focus:ring-[#C8A78E]/40
-            hover:bg-white/10
-            transition-all
-          "
-        />
-      </div>
-
-      {/* Specifications */}
-      <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-[#C8A78E] font-mono">
-          Specifications
-        </h3>
-
-        <div className="flex flex-col gap-3 md:flex-row">
-          <input
-            name="year"
-            placeholder="Year"
-            type="number"
-            value={form.year}
-            onChange={handleChange}
-            required
-            className="w-full rounded-2xl bg-white/5 backdrop-blur-xl px-4 py-3 text-white placeholder-zinc-400 shadow-[0_8px_30px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-[#C8A78E]/40 hover:bg-white/10 transition-all"
-          />
-
-          <input
-            name="seats"
-            placeholder="Seats"
-            type="number"
-            value={form.seats}
-            onChange={handleChange}
-            required
-            className="w-full rounded-2xl bg-white/5 backdrop-blur-xl px-4 py-3 text-white placeholder-zinc-400 shadow-[0_8px_30px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-[#C8A78E]/40 hover:bg-white/10 transition-all"
-          />
+              <Input
+                type={
+                  ["year", "seats", "pricePerDay", "mileage"].includes(key)
+                    ? "number"
+                    : "text"
+                }
+                value={form[key]}
+                onChange={(e) => handleChange(key, e.target.value)}
+                placeholder={key.replace(/([A-Z])/g, " $1")}
+              />
+            </div>
+          ))}
         </div>
 
-        <div className="flex flex-col gap-3 md:flex-row">
-          <input
-            name="pricePerDay"
-            placeholder="Price per day"
-            type="number"
-            value={form.pricePerDay}
-            onChange={handleChange}
-            required
-            className="w-full rounded-2xl bg-white/5 backdrop-blur-xl px-4 py-3 text-white placeholder-zinc-400 shadow-[0_8px_30px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-[#C8A78E]/40 hover:bg-white/10 transition-all"
-          />
-
-          <input
-            name="color"
-            placeholder="Color"
-            value={form.color}
-            onChange={handleChange}
-            className="w-full rounded-2xl bg-white/5 backdrop-blur-xl px-4 py-3 text-white placeholder-zinc-400 shadow-[0_8px_30px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-[#C8A78E]/40 hover:bg-white/10 transition-all"
-          />
-        </div>
-
-        <input
-          name="mileage"
-          placeholder="Mileage"
-          type="number"
-          value={form.mileage}
-          onChange={handleChange}
-          className="w-full rounded-2xl bg-white/5 backdrop-blur-xl px-4 py-3 text-white placeholder-zinc-400 shadow-[0_8px_30px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-[#C8A78E]/40 hover:bg-white/10 transition-all"
-        />
-
-        {/* Selects */}
-        <div className="flex flex-col md:flex-row gap-3">
+        {/* Select fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SelectBlock
             label="Category"
-            name="category"
             value={form.category}
-            onChange={handleChange}
+            onValueChange={(v) => handleChange("category", v)}
             options={[
               "SEDAN",
               "SUV",
@@ -266,141 +194,118 @@ export default function CreateCarForm() {
 
           <SelectBlock
             label="Transmission"
-            name="transmission"
             value={form.transmission}
-            onChange={handleChange}
+            onValueChange={(v) => handleChange("transmission", v)}
             options={["AUTOMATIC", "MANUAL"]}
           />
-        </div>
 
-        <div className="flex flex-col md:flex-row gap-3">
           <SelectBlock
-            label="Fuel"
-            name="fuelType"
+            label="Fuel type"
             value={form.fuelType}
-            onChange={handleChange}
+            onValueChange={(v) => handleChange("fuelType", v)}
             options={["GASOLINE", "DIESEL", "ELECTRIC", "HYBRID"]}
           />
 
           <SelectBlock
-            label="Availability"
-            name="status"
+            label="Status"
             value={form.status}
-            onChange={handleChange}
+            onValueChange={(v) => handleChange("status", v)}
             options={["AVAILABLE", "RENTED", "MAINTENANCE", "RESERVED"]}
           />
         </div>
-      </div>
 
-      {/* Images */}
-      <div className="space-y-3">
-        <h3 className="text-xl font-semibold text-[#C8A78E] font-mono">
-          Upload Images
-        </h3>
+        {/* Air conditioning */}
+        <div className="flex items-center justify-between border rounded-lg p-3">
+          <Label className="text-sm text-white">Air conditioning</Label>
 
-        <label className="relative group block">
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleFiles}
-            className="hidden"
-            disabled={images.length >= 5}
-          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => toggleBoolean("airConditioning")}
+            className="text-black"
+          >
+            {form.airConditioning ? "Yes" : "No"}
+          </Button>
+        </div>
 
-          <div className="flex flex-col items-center justify-center rounded-3xl bg-white/5 backdrop-blur-xl py-10 cursor-pointer text-center shadow-[0_8px_30px_rgba(0,0,0,0.25)] hover:bg-white/10 transition-all">
-            <p className="text-sm text-white/80 font-medium">
-              Click to upload images
-            </p>
-            <p className="text-xs text-zinc-400 mt-1">
-              PNG, JPG – max 5 images
-            </p>
-          </div>
-        </label>
+        {/* Images */}
+        <div className="space-y-2">
+          <Label className="text-sm text-gray-600">Car images (max 5)</Label>
 
-        {previewUrls.length > 0 && (
-          <div className="mt-2 grid grid-cols-3 sm:grid-cols-4 gap-3">
-            {previewUrls.map((url, idx) => (
-              <div
-                key={idx}
-                className="relative w-full h-24 rounded-xl overflow-hidden border border-white/20 shadow-md"
-              >
-                <img
-                  src={url}
-                  alt={`preview-${idx}`}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(idx)}
-                  className="absolute top-1 right-1 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-white hover:bg-red-600"
+          <label className="flex flex-col items-center justify-center gap-2 px-4 py-6 border-2 border-dashed rounded-lg cursor-pointer border-[#e7bcac] transition">
+            <span className="text-sm text-gray-500">
+              Click to upload or drag & drop images
+            </span>
+            <span className="text-xs text-gray-500">
+              PNG, JPG – up to 5 files
+            </span>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleFiles}
+              disabled={images.length >= 5}
+              className="hidden"
+            />
+          </label>
+
+          {previewUrls.length > 0 && (
+            <div className="grid grid-cols-3 gap-3 mt-2">
+              {previewUrls.map((url, idx) => (
+                <div
+                  key={idx}
+                  className="relative h-24 rounded-lg overflow-hidden border group"
                 >
-                  &times;
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+                  <img
+                    src={url}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
 
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="
-          w-full py-3 rounded-3xl
-          bg-white/10 backdrop-blur-xl
-          text-white font-semibold
-          shadow-[0_10px_30px_rgba(0,0,0,0.4)]
-          hover:bg-white/20
-          hover:text-[#8a1e08]
-          transition-all
-          font-serif
-          disabled:opacity-60
-          disabled:cursor-not-allowed
-        "
-      >
-        {loading ? "Creating..." : "Create Car"}
-      </button>
-    </form>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(idx)}
+                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs opacity-0 group-hover:opacity-100 transition"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Submit */}
+        <div className="flex justify-end">
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : "Create car"}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }
 
-function SelectBlock({ label, name, value, onChange, options }) {
+function SelectBlock({ label, value, onValueChange, options }) {
   return (
-    <div className="relative flex-1">
-      <label className="text-xs text-zinc-400 mb-1 block">{label}</label>
+    <div className="space-y-1">
+      <Label className="text-sm text-gray-600">{label}</Label>
 
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="
-          w-full appearance-none
-          rounded-2xl
-          bg-white/5 backdrop-blur-xl
-          border border-white/10
-          px-4 py-3 pr-10
-          text-sm font-medium tracking-wide
-          text-white
-          shadow-lg
-          focus:outline-none
-          focus:ring-2 focus:ring-[#C8A78E]/60
-          hover:bg-white/10
-          transition-all
-        "
-      >
-        {options.map((opt) => (
-          <option key={opt} value={opt} className="bg-zinc-900 text-white">
-            {opt}
-          </option>
-        ))}
-      </select>
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger>
+          <SelectValue placeholder={`Select ${label}`} />
+        </SelectTrigger>
 
-      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-300 text-xs">
-        ▼
-      </span>
+        <SelectContent>
+          {options.map((opt) => (
+            <SelectItem key={opt} value={opt}>
+              {opt}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

@@ -10,5 +10,9 @@ router.post("/", upload.array("image", 5), carController.createCar);
 router.get("/", carController.getAllCars);
 // Get car by ID
 router.get("/:id", carController.getCarById);
+// Update car
+router.put("/:id", upload.array("image", 5), carController.updateCar);
+//delete car images
+router.delete("/car-images/:imageId", carController.deleteCarImage);
 
 export default router;

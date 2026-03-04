@@ -1,118 +1,119 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+
 import {
-  LayoutDashboard,
-  CalendarCheck,
   Car,
+  LayoutDashboard,
+  Calendar,
   Users,
   Plus,
   Menu,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export default function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="admin-layout min-h-screen w-full bg-black text-white flex">
+    <div className="flex min-h-dvh overflow-hidden bg-black text-white">
       {/* Sidebar */}
       <aside
-        className={`
-          admin-sidebar
-          ${collapsed ? "w-20" : "w-64"}
-          shrink-0
-          border-r border-white/10
-          bg-black/60 backdrop-blur-xl
-          transition-width duration-300
-          flex flex-col
-        `}
+        className={`flex flex-col border-r border-white/10 bg-zinc-950 transition-[width] duration-300 ${
+          collapsed ? "w-[72px]" : "w-64"
+        }`}
       >
-        {/* Logo / Title */}
-        <div className="px-4 py-5 border-b border-white/10 flex items-center justify-between">
+        {/* Brand */}
+        <div className="h-16 flex items-center px-4 shrink-0">
           {!collapsed ? (
-            <div className="flex flex-col leading-tight">
-              <span className="text-[14px] uppercase tracking-widest text-zinc-500">
-                Back office
-              </span>
-              <h2 className="text-xl font-semibold tracking-tight text-white">
-                Aura<span className="text-zinc-400">Drive</span>
-              </h2>
-            </div>
+            <span className="text-lg font-semibold">
+              Aura<span className="text-zinc-400">Drive</span>
+            </span>
           ) : (
-            <span className="text-xl font-semibold">A</span>
+            <span className="text-lg font-semibold">A</span>
           )}
-
-          <button
-            className="text-zinc-400 hover:text-white"
-            onClick={() => setCollapsed(!collapsed)}
-          >
-            {collapsed ? (
-              <ChevronRight className="w-5 h-5" />
-            ) : (
-              <ChevronLeft className="w-5 h-5" />
-            )}
-          </button>
         </div>
 
+        <Separator className="bg-white/10" />
+
         {/* Navigation */}
-        <nav className="flex-1 px-1 py-4 space-y-1 text-sm">
-          <NavItem
+        <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+          <Item
             to="/admin"
+            icon={LayoutDashboard}
             label="Dashboard"
-            Icon={LayoutDashboard}
             collapsed={collapsed}
+            end
           />
-          <NavItem
+
+          <Item
             to="/admin/allBookings"
+            icon={Calendar}
             label="Bookings"
-            Icon={CalendarCheck}
             collapsed={collapsed}
           />
-          <NavItem
+
+          <Item
             to="/admin/addCar"
+            icon={Plus}
             label="Add Car"
-            Icon={Plus}
             collapsed={collapsed}
           />
-          <NavItem
+
+          <Item
             to="/admin/cars"
-            label="All Cars"
-            Icon={Car}
+            icon={Car}
+            label="Cars"
             collapsed={collapsed}
           />
-          <NavItem
+
+          <Item
             to="/admin/users"
+            icon={Users}
             label="Users"
-            Icon={Users}
             collapsed={collapsed}
           />
         </nav>
-      </aside>
 
-      {/* Main content */}
-      <div className="admin-main flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
-        <header className="admin-header h-16 border-b border-white/10 bg-black/60 backdrop-blur-xl flex items-center justify-between px-6">
-          <div className="flex items-center gap-4">
-            {!collapsed && (
-              <img src="/logo.png" alt="logo" className="h-30 w-auto" />
-            )}
-            {collapsed && (
-              <img src="/logo.png" alt="logo" className="h-30 w-auto" />
-            )}
-          </div>
+        <Separator className="bg-white/10" />
 
+        {/* Footer user */}
+        <div className="h-20 flex items-center px-3 shrink-0">
           <div className="flex items-center gap-3">
-            <span className="text-xs text-zinc-400">Admin</span>
-            <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-xs">
+            <div className="h-9 w-9 rounded-full bg-[#C8A78E]/20 flex items-center justify-center text-sm font-semibold text-[#C8A78E]">
               A
             </div>
+
+            {!collapsed && (
+              <div className="leading-tight">
+                <p className="text-sm font-medium">Admin</p>
+                <p className="text-xs text-zinc-400">Administrator</p>
+              </div>
+            )}
           </div>
+        </div>
+      </aside>
+
+      {/* Main area */}
+      <div className="flex flex-1 flex-col min-w-0">
+        {/* Top bar */}
+        <header className="h-16 shrink-0 border-b border-white/10 bg-zinc-950 flex items-center justify-between px-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setCollapsed((v) => !v)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+
+          <img src="/logo.png" alt="Logo" className="h-35 object-contain" />
+
+          <div className="text-sm text-zinc-400">BACK OFFICE</div>
         </header>
 
         {/* Page content */}
-        <main className="admin-content flex-1 min-h-0 bg-black overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 bg-black">
           <Outlet />
         </main>
       </div>
@@ -120,31 +121,30 @@ export default function AdminLayout() {
   );
 }
 
-function NavItem({ to, label, Icon, collapsed }) {
+/* ---------------------------------- */
+/* Sidebar item */
+/* ---------------------------------- */
+
+function Item({ to, icon: Icon, label, collapsed, end = false }) {
   return (
     <NavLink
       to={to}
-      end
+      end={end}
       className={({ isActive }) =>
-        `group relative flex items-center gap-3 px-4 py-2.5 rounded-xl transition
-        ${isActive ? "bg-white/10 text-white" : "text-zinc-400 hover:text-white hover:bg-white/7"}
         `
+        flex items-center h-10 rounded-md px-3 gap-3 text-sm
+        transition-colors
+        focus:outline-none focus:ring-1 focus:ring-white/20
+        ${
+          isActive
+            ? "bg-white/10 text-white"
+            : "text-zinc-400 hover:bg-white/5 hover:text-white"
+        }
+      `
       }
     >
-      {({ isActive }) => (
-        <>
-          {/* active indicator */}
-          <span
-            className={`absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r
-              ${isActive ? "bg-white" : "bg-transparent"}
-            `}
-          />
-          <Icon
-            className={`w-5 h-5 ${isActive ? "text-white" : "text-[#c14416] group-hover:text-white/50"}`}
-          />
-          {!collapsed && <span className="text-sm font-medium">{label}</span>}
-        </>
-      )}
+      <Icon className="h-4 w-4 shrink-0" />
+      {!collapsed && <span className="truncate">{label}</span>}
     </NavLink>
   );
 }

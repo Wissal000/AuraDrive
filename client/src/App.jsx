@@ -8,6 +8,8 @@ import BookingModal from "@/component/customer/BookingModal";
 import GetAllBooking from "@/pages/admin/getAllBooking";
 import AdminLayout from "@/layouts/AdminLayout";
 import AdminCarsPage from "@/pages/admin/Cars";
+import User from "@/pages/admin/User";
+import CarUpdateModal from "@/component/admin/CarUpdateModal";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <Route path="addCar" element={<CreateCarForm />} />
         <Route path="cars" element={<AdminCarsPage />} />
         <Route path="allBookings" element={<GetAllBooking />} />
+        <Route path="users" element={<User />} />
+        <Route path="cars/:id" element={<CarUpdateModal />} />
       </Route>
     </Routes>
   );
