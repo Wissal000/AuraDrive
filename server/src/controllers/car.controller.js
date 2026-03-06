@@ -276,3 +276,17 @@ export const deleteCarImage = async (req, res) => {
     });
   }
 };
+
+//get number of cars for dashboard stats
+export const getCarStats = async (req, res) => {
+  try {
+    const totalCars = await prisma.car.count();
+    res.status(200).json({ totalCars });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({  
+      message: "Failed to fetch car count",
+      error: error.message,
+    });
+  } 
+};

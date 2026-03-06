@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import EditCarModal from "@/component/admin/CarUpdateModal";
+import { toast } from "sonner";
 
 export default function AdminCarsPage() {
   const [cars, setCars] = useState([]);
@@ -46,6 +47,7 @@ export default function AdminCarsPage() {
         "Failed to update car:",
         error.response?.data || error.message,
       );
+      toast.error("Failed to update car");
     }
   };
 
@@ -73,7 +75,7 @@ export default function AdminCarsPage() {
         "Failed to delete image:",
         err.response?.data || err.message,
       );
-      alert("Failed to delete image");
+      toast.error("Failed to delete image");
     }
   };
 

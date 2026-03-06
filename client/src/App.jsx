@@ -10,29 +10,34 @@ import AdminLayout from "@/layouts/AdminLayout";
 import AdminCarsPage from "@/pages/admin/Cars";
 import User from "@/pages/admin/User";
 import CarUpdateModal from "@/component/admin/CarUpdateModal";
+import Dashboard from "@/pages/admin/Dashboard";
+import { Toaster } from "sonner";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/cars" element={<Cars />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/carDetails/:id" element={<CarDetails />} />
-      <Route path="/booking/:carId" element={<BookingModal />} />
+    <>
+      <Toaster richColors position="top-right" />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/cars" element={<Cars />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/carDetails/:id" element={<CarDetails />} />
+        <Route path="/booking/:carId" element={<BookingModal />} />
 
-      {/* ================= ADMIN ROUTES ================= */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route
-          index
-          element={<div className="p-6 text-white">Admin dashboard</div>}
-        />
-        <Route path="addCar" element={<CreateCarForm />} />
-        <Route path="cars" element={<AdminCarsPage />} />
-        <Route path="allBookings" element={<GetAllBooking />} />
-        <Route path="users" element={<User />} />
-        <Route path="cars/:id" element={<CarUpdateModal />} />
-      </Route>
-    </Routes>
+        {/* ================= ADMIN ROUTES ================= */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route
+            index
+            element={<Dashboard />}
+          />
+          <Route path="addCar" element={<CreateCarForm />} />
+          <Route path="cars" element={<AdminCarsPage />} />
+          <Route path="allBookings" element={<GetAllBooking />} />
+          <Route path="users" element={<User />} />
+          <Route path="cars/:id" element={<CarUpdateModal />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 

@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export default function CreateCarForm() {
   const fileInputRef = useRef(null);
@@ -86,7 +87,7 @@ export default function CreateCarForm() {
     const missing = validateForm();
 
     if (missing.length > 0) {
-      alert("Please fill all required fields\n");
+      toast.warning("Please fill all required fields");
       return;
     }
 
@@ -103,7 +104,7 @@ export default function CreateCarForm() {
 
       await axios.post("http://localhost:8000/api/cars", formData);
 
-      alert("Car created successfully!");
+      toast.success("Car created successfully");
 
       // reset form
       setForm({
@@ -128,7 +129,7 @@ export default function CreateCarForm() {
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       console.error(err);
-      alert("Failed to create car. See console for details.");
+      toast.error(err?.response?.data?.message || "Failed to create car");
     } finally {
       setLoading(false);
     }

@@ -36,7 +36,7 @@ export default function BookingsPage() {
           </p>
         </div>
 
-        <div className="rounded-full border border-white/10 bg-white/5 backdrop-blur px-4 py-1.5 text-xs text-zinc-300">
+        <div className="rounded-full border border-white/10 bg-white/5 backdrop-blur px-4 py-1.5 text-sm text-[#d01d1de6] font-bold">
           {bookings.length} users
         </div>
       </div>

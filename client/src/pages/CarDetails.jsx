@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "@/component/landing/navbar";
 import Footer from "@/component/landing/footer";
@@ -11,7 +11,6 @@ export default function CarDetails() {
   const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState(null);
-  const navigate = useNavigate();
 
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 

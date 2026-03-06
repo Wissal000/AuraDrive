@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
 
 export default function BookingModal({ car, isBookingOpen, onClose }) {
   const [bookingData, setBookingData] = useState({
@@ -10,20 +11,41 @@ export default function BookingModal({ car, isBookingOpen, onClose }) {
     notes: "",
   });
 
+  const today = new Date().toISOString().split("T")[0];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check for empty required fields
+    const { customerName, customerEmail, customerPhone, startDate, endDate } =
+      bookingData;
+
+    if (
+      !customerName ||
+      !customerEmail ||
+      !customerPhone ||
+      !startDate ||
+      !endDate
+    ) {
+      toast.warning("Please fill in all required fields before booking!");
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:8000/api/bookings", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           ...bookingData,
           carId: car.id,
           pricePerDay: car.pricePerDay,
         }),
       });
+
       if (res.ok) {
-        alert("Booking created successfully!");
+        toast.success("Booking created successfully!");
         onClose();
         setBookingData({
           customerName: "",
@@ -34,10 +56,11 @@ export default function BookingModal({ car, isBookingOpen, onClose }) {
           notes: "",
         });
       } else {
-        alert("Failed to create booking");
+        toast.error("Failed to create booking");
       }
     } catch (err) {
       console.error(err);
+      toast.error("An error occurred while creating the booking");
     }
   };
 
@@ -111,9 +134,13 @@ export default function BookingModal({ car, isBookingOpen, onClose }) {
                       {dateKey === "startDate" ? "Start Date" : "End Date"}{" "}
                       <span className="text-red-500">*</span>
                     </label>
+
                     <input
                       type="date"
                       required
+                      min={
+                        dateKey === "startDate" ? today : bookingData.startDate
+                      }
                       value={bookingData[dateKey]}
                       onChange={(e) =>
                         setBookingData({

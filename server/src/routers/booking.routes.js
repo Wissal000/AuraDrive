@@ -9,5 +9,9 @@ router.post("/", bookingController.createBooking);
 router.get("/", bookingController.getAllBookings);
 //update booking status
 router.patch("/:id/status", bookingController.updateBookingStatus);
+//generate booking receipt as PDF
+router.get("/:id/receipt", bookingController.generateBookingReceipt);
+//get number of bookings
+router.get("/count", bookingController.getBookingStats);
 
 export default router;

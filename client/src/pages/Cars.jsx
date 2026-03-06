@@ -3,6 +3,7 @@ import axios from "axios";
 import Navbar from "@/component/landing/navbar";
 import Footer from "@/component/landing/footer";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 export default function CarsPage() {
   const [cars, setCars] = useState([]);
@@ -48,18 +49,18 @@ export default function CarsPage() {
       <Navbar />
 
       {/* Header */}
-      <header className="w-full text-center pt-32 px-4">
-        <p className="text-[#C8A78E] font-bold text-lg tracking-wider font-mono">
-          Premium Fleet
+      <section className="w-full text-center pt-32 px-4">
+        <p className="text-[#C8A78E] tracking-widest font-semibold">
+          PREMIUM FLEET
         </p>
-        <h1 className="text-5xl md:text-6xl font-extrabold text-white mt-3 tracking-tight">
-          Available Cars
+        <h1 className="text-6xl md:text-7xl font-bold mt-4 text-white/70">
+          Choose Your Ride
         </h1>
-        <p className="mt-4 text-zinc-400 max-w-2xl mx-auto text-base md:text-lg">
-          Explore our selection of premium vehicles. Choose your ride and book
-          instantly.
+        <p className="text-white mt-6 max-w-xl mx-auto">
+          Discover our collection of luxury vehicles designed for comfort,
+          performance, and unforgettable journeys.
         </p>
-      </header>
+      </section>
 
       {/* Cars Grid */}
       <div className="max-w-7xl mx-auto px-4 mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -73,7 +74,14 @@ export default function CarsPage() {
               <img
                 src={car.images[0]?.url}
                 alt={car.model}
-                className="w-full h-full object-cover"
+                className="
+                 absolute inset-0
+                 w-full h-full
+                 object-cover
+                 transition-transform
+                 duration-700
+                 group-hover:scale-110
+                "
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-zinc-700/40 text-white font-semibold text-lg">
@@ -81,27 +89,58 @@ export default function CarsPage() {
               </div>
             )}
 
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+
+            <Badge
+              className="
+   absolute top-5 left-5
+   px-3 py-2 h-7
+   rounded-2xl
+   bg-white/80 backdrop-blur-2xl
+   border border-white/30
+   shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+   text-black
+   font-semibold
+   tracking-tight
+ "
+            >
+              <span className="text-sm font-semibold font-mono">
+                {car.pricePerDay}
+              </span>
+              <span className="text-xs ml-1 text-black">dh/day</span>
+            </Badge>
+
             {/* Info Overlay */}
             <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/70 to-transparent rounded-3xl">
-              <p className="text-sm text-zinc-200 mt-1 tracking-wide">
-                {car.category} | {car.transmission} | {car.fuelType}
-              </p>
-              <h2 className="text-2xl font-bold text-white drop-shadow-md">
+              <div className="flex gap-2 mb-3">
+                <Badge variant="secondary">{car.category}</Badge>
+                <Badge variant="secondary">{car.transmission}</Badge>
+                <Badge variant="secondary">{car.fuelType}</Badge>
+              </div>
+
+              <h2 className="text-2xl font-bold font-mono text-white">
                 {car.brand} {car.model}
               </h2>
-              <p className="text-lg text-[#C8A78E] font-mono mt-1">
-                {car.pricePerDay} dh/day
-              </p>
-
               <button
-                className="mt-4 ml-auto flex items-center gap-2 px-6 py-2
-                bg-gradient-to-r from-[#C8A78E] via-[#b9987f] to-[#C8A78E]
-                text-black font-semibold
-                rounded-3xl shadow-lg
-                hover:scale-105 transition-transform duration-300"
                 onClick={() => navigate(`/carDetails/${car.id}`)}
+                className="
+  mt-4 ml-auto
+  flex items-center gap-2
+  px-6 py-2.5
+  rounded-xl
+  text-sm font-medium text-white
+
+  bg-white/10
+  backdrop-blur-xl
+  border border-white/20
+
+  hover:bg-white/20
+  transition-all duration-300
+  active:scale-95
+  "
               >
-                Book Now <span className="text-xl">→</span>
+                Book Now
+                <span className="text-lg">→</span>
               </button>
             </div>
 

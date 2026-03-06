@@ -8,6 +8,8 @@ const router = express.Router();
 router.post("/", upload.array("image", 5), carController.createCar);
 // Get all cars with images
 router.get("/", carController.getAllCars);
+// Get number of cars (specific route must come BEFORE /:id)
+router.get("/count", carController.getCarStats);
 // Get car by ID
 router.get("/:id", carController.getCarById);
 // Update car
