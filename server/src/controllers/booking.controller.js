@@ -235,3 +235,37 @@ export const generateBookingReceipt = async (req, res) => {
     });
   }
 };
+
+//get revenue of completed bookings
+export const getCompletedRevenue = async (req, res) => {
+  try {
+    const bookings = await prisma.booking.findMany({
+      where: {
+        status: "COMPLETED",
+      },
+    });
+
+    let totalRevenue = 0;
+
+    bookings.forEach((booking) => {
+      const start = new Date(booking.startDate);
+      const end = new Date(booking.endDate);
+
+      const diffTime = Math.abs(end - start);
+      const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      totalRevenue += days * booking.pricePerDay;
+    });
+
+    res.status(200).json({
+      success: true,
+      totalRevenue,
+      completedBookings: bookings.length,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Failed to calculate revenue",
+    });
+  }
+};

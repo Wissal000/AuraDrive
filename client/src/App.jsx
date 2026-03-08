@@ -11,6 +11,8 @@ import AdminCarsPage from "@/pages/admin/Cars";
 import User from "@/pages/admin/User";
 import CarUpdateModal from "@/component/admin/CarUpdateModal";
 import Dashboard from "@/pages/admin/Dashboard";
+import MaintenancePage from "@/pages/admin/maintenancePage";
+import Maintenance from "@/pages/admin/Maintenance";
 import { Toaster } from "sonner";
 
 function App() {
@@ -26,15 +28,14 @@ function App() {
 
         {/* ================= ADMIN ROUTES ================= */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route
-            index
-            element={<Dashboard />}
-          />
+          <Route index element={<Dashboard />} />
           <Route path="addCar" element={<CreateCarForm />} />
           <Route path="cars" element={<AdminCarsPage />} />
           <Route path="allBookings" element={<GetAllBooking />} />
           <Route path="users" element={<User />} />
           <Route path="cars/:id" element={<CarUpdateModal />} />
+          <Route path="maintenance/:carId" element={<MaintenancePage />} />
+          <Route path="getAllMaintenance" element={<Maintenance />} />
         </Route>
       </Routes>
     </>

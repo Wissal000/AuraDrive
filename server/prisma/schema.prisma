@@ -49,6 +49,12 @@ enum BookingStatus {
   COMPLETED
 }
 
+enum MaintenanceStatus {
+  PENDING       // Scheduled but not started
+  IN_PROGRESS   // Currently ongoing
+  COMPLETED     // Finished
+}
+
 model Car {
   id              String           @id @default(uuid())
   plateNumber     String           @unique
@@ -70,6 +76,7 @@ model Car {
 
   images CarImage[]
   bookings Booking[]
+  maintenances Maintenance[]
 }
 
 model CarImage {
@@ -96,6 +103,21 @@ model Booking {
   // Relation to Car
   car      Car    @relation(fields: [carId], references: [id])
   carId    String
+
+  @@index([carId])
+}
+
+model Maintenance {
+  id          String      @id @default(uuid())
+  car         Car         @relation(fields: [carId], references: [id])
+  carId       String
+  startDate   DateTime
+  endDate     DateTime?
+  description String      
+  cost        Float?      
+  status      MaintenanceStatus  @default(PENDING) // Current state
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([carId])
 }

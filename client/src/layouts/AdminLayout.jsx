@@ -8,6 +8,7 @@ import {
   Users,
   Plus,
   Menu,
+  Wrench,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -72,6 +73,12 @@ export default function AdminLayout() {
             to="/admin/users"
             icon={Users}
             label="Users"
+            collapsed={collapsed}
+          />
+          <Item
+            to="/admin/getAllMaintenance"
+            icon={Wrench}
+            label="Maintenance"
             collapsed={collapsed}
           />
         </nav>

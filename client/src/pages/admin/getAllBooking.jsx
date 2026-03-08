@@ -89,14 +89,14 @@ export default function BookingsPage() {
     <div className="p-6 text-white min-h-screen bg-black">
       {/* Header */}
       <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between mt-10 gap-2">
-        <div>
+        <div className="mb-10">
           <h1 className="text-2xl font-semibold">Bookings</h1>
           <p className="text-sm text-zinc-400">
             Manage all customer reservations
           </p>
         </div>
 
-        <div className="text-sm text-[#e44413e9] font-bold">
+        <div className="rounded-full border border-white/10 bg-white/5 backdrop-blur px-4 py-1.5 text-sm text-[#d01d1de6] font-bold">
           {bookings.length} bookings
         </div>
       </div>

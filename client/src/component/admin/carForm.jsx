@@ -11,6 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 export default function CreateCarForm() {
   const fileInputRef = useRef(null);
@@ -136,155 +144,167 @@ export default function CreateCarForm() {
   };
 
   return (
-    <div className="flex justify-center py-10 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-2xl bg-black rounded-xl border p-6 space-y-6"
-      >
-        <h2 className="text-xl font-semibold text-white text-center">
-          Add new car
-        </h2>
+    <div className="min-h-screen flex justify-center items-start py-16 px-6 bg-black">
+      <Card className="w-full max-w-6xl bg-white/5 border border-white/10 backdrop-blur-xl">
+        {/* HEADER */}
+        <CardHeader>
+          <CardTitle className="text-2xl text-white">Add New Car</CardTitle>
+          <CardDescription>
+            Fill in the vehicle details to add it to the fleet
+          </CardDescription>
+        </CardHeader>
 
-        {/* Basic info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            "plateNumber",
-            "brand",
-            "model",
-            "year",
-            "seats",
-            "pricePerDay",
-            "color",
-            "mileage",
-          ].map((key) => (
-            <div key={key} className="space-y-1">
-              <Label className="text-sm text-gray-600">
-                {key.replace(/([A-Z])/g, " $1")}
-              </Label>
+        <CardContent className="space-y-10">
+          {/* BASIC INFO */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white">
+              Basic Information
+            </h3>
 
-              <Input
-                type={
-                  ["year", "seats", "pricePerDay", "mileage"].includes(key)
-                    ? "number"
-                    : "text"
-                }
-                value={form[key]}
-                onChange={(e) => handleChange(key, e.target.value)}
-                placeholder={key.replace(/([A-Z])/g, " $1")}
-              />
-            </div>
-          ))}
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                "plateNumber",
+                "brand",
+                "model",
+                "year",
+                "seats",
+                "pricePerDay",
+              ].map((key) => (
+                <div key={key} className="space-y-1">
+                  <Label className="text-gray-400 flex items-center gap-1 capitalize">
+                    {key}
+                    <span className="inline-block w-1 h-1 bg-red-500 rounded-full" />
+                  </Label>
 
-        {/* Select fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <SelectBlock
-            label="Category"
-            value={form.category}
-            onValueChange={(v) => handleChange("category", v)}
-            options={[
-              "SEDAN",
-              "SUV",
-              "HATCHBACK",
-              "CONVERTIBLE",
-              "COUPE",
-              "MINIVAN",
-              "PICKUP",
-            ]}
-          />
-
-          <SelectBlock
-            label="Transmission"
-            value={form.transmission}
-            onValueChange={(v) => handleChange("transmission", v)}
-            options={["AUTOMATIC", "MANUAL"]}
-          />
-
-          <SelectBlock
-            label="Fuel type"
-            value={form.fuelType}
-            onValueChange={(v) => handleChange("fuelType", v)}
-            options={["GASOLINE", "DIESEL", "ELECTRIC", "HYBRID"]}
-          />
-
-          <SelectBlock
-            label="Status"
-            value={form.status}
-            onValueChange={(v) => handleChange("status", v)}
-            options={["AVAILABLE", "RENTED", "MAINTENANCE", "RESERVED"]}
-          />
-        </div>
-
-        {/* Air conditioning */}
-        <div className="flex items-center justify-between border rounded-lg p-3">
-          <Label className="text-sm text-white">Air conditioning</Label>
-
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => toggleBoolean("airConditioning")}
-            className="text-black"
-          >
-            {form.airConditioning ? "Yes" : "No"}
-          </Button>
-        </div>
-
-        {/* Images */}
-        <div className="space-y-2">
-          <Label className="text-sm text-gray-600">Car images (max 5)</Label>
-
-          <label className="flex flex-col items-center justify-center gap-2 px-4 py-6 border-2 border-dashed rounded-lg cursor-pointer border-[#e7bcac] transition">
-            <span className="text-sm text-gray-500">
-              Click to upload or drag & drop images
-            </span>
-            <span className="text-xs text-gray-500">
-              PNG, JPG – up to 5 files
-            </span>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleFiles}
-              disabled={images.length >= 5}
-              className="hidden"
-            />
-          </label>
-
-          {previewUrls.length > 0 && (
-            <div className="grid grid-cols-3 gap-3 mt-2">
-              {previewUrls.map((url, idx) => (
-                <div
-                  key={idx}
-                  className="relative h-24 rounded-lg overflow-hidden border group"
-                >
-                  <img
-                    src={url}
-                    alt=""
-                    className="w-full h-full object-cover"
+                  <Input
+                    type={
+                      ["year", "seats", "pricePerDay"].includes(key)
+                        ? "number"
+                        : "text"
+                    }
+                    value={form[key]}
+                    onChange={(e) => handleChange(key, e.target.value)}
+                    className="text-white placeholder:text-white/50"
                   />
-
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs opacity-0 group-hover:opacity-100 transition"
-                  >
-                    ✕
-                  </button>
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Submit */}
-        <div className="flex justify-end">
-          <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Create car"}
-          </Button>
-        </div>
-      </form>
+          <Separator className="bg-white/10" />
+
+          {/* VEHICLE DETAILS */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white">Specifications</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <SelectBlock
+                label="Category"
+                value={form.category}
+                onValueChange={(v) => handleChange("category", v)}
+                options={[
+                  "SEDAN",
+                  "SUV",
+                  "HATCHBACK",
+                  "CONVERTIBLE",
+                  "COUPE",
+                  "MINIVAN",
+                  "PICKUP",
+                ]}
+              />
+
+              <SelectBlock
+                label="Transmission"
+                value={form.transmission}
+                onValueChange={(v) => handleChange("transmission", v)}
+                options={["AUTOMATIC", "MANUAL"]}
+              />
+
+              <SelectBlock
+                label="Fuel Type"
+                value={form.fuelType}
+                onValueChange={(v) => handleChange("fuelType", v)}
+                options={["GASOLINE", "DIESEL", "ELECTRIC", "HYBRID"]}
+              />
+
+              <SelectBlock
+                label="Status"
+                value={form.status}
+                onValueChange={(v) => handleChange("status", v)}
+                options={["AVAILABLE", "RENTED", "MAINTENANCE", "RESERVED"]}
+              />
+            </div>
+          </div>
+
+          <Separator className="bg-white/10" />
+
+          {/* IMAGE UPLOAD */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white">Vehicle Images</h3>
+
+            <label className="flex flex-col items-center justify-center gap-3 p-10 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-[#C8A78E] transition">
+              <p className="text-gray-400">Click or drag images here</p>
+              <p className="text-xs text-gray-500">PNG or JPG • max 5 images</p>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFiles}
+                className="hidden"
+              />
+            </label>
+
+            {/* PREVIEW */}
+            {previewUrls.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {previewUrls.map((url, idx) => (
+                  <div
+                    key={idx}
+                    className="relative group rounded-lg overflow-hidden border border-white/10"
+                  >
+                    <img src={url} className="w-full h-24 object-cover" />
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="absolute top-1 right-1 bg-black/70 text-white w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 transition"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* SUBMIT */}
+          <div className="flex justify-center">
+            <Button
+              size="lg"
+              disabled={loading}
+              className="
+      w-60
+      rounded-xl
+      backdrop-blur-lg
+      bg-white/10
+      border border-white/20
+      text-white
+      font-medium
+      hover:bg-white/20
+      hover:border-white/30
+      transition-all
+      duration-200
+      active:scale-[0.97]
+      disabled:opacity-50
+    "
+            >
+              {loading ? "Creating..." : "Create Car"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

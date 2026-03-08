@@ -13,5 +13,7 @@ router.patch("/:id/status", bookingController.updateBookingStatus);
 router.get("/:id/receipt", bookingController.generateBookingReceipt);
 //get number of bookings
 router.get("/count", bookingController.getBookingStats);
+//get total revenue from bookings
+router.get("/revenue", bookingController.getCompletedRevenue);
 
 export default router;

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent } from "@/components/ui/card";
 
 /** --- Helper Field Component --- */
 function Field({ label, children }) {
@@ -153,176 +154,181 @@ function EditCarModal({ isOpen, onClose, car, onSave, onDeleteImage }) {
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[75vh] px-6 pb-6">
-          {/* --- Car Info Section --- */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {[
-              { label: "Plate number", name: "plateNumber", type: "text" },
-              { label: "Brand", name: "brand", type: "text" },
-              { label: "Model", name: "model", type: "text" },
-              { label: "Year", name: "year", type: "number" },
-              { label: "Seats", name: "seats", type: "number" },
-              { label: "Price / day", name: "pricePerDay", type: "number" },
-              { label: "Color", name: "color", type: "text" },
-              { label: "Mileage", name: "mileage", type: "number" },
-            ].map(({ label, name, type }) => (
-              <Field key={name} label={label}>
-                <Input
-                  type={type}
-                  value={formData[name]}
-                  onChange={(e) => handleChange(name, e.target.value)}
-                  className="bg-white/5 border border-white/20 text-white placeholder:text-white/50 focus:ring-1 focus:ring-[#C8A78E] rounded-md"
-                />
+        <ScrollArea className="max-h-[75vh] px-6 pb-4 mt-4">
+          <div className="space-y-6">
+            {/* Car Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {[
+                { label: "Plate number", name: "plateNumber", type: "text" },
+                { label: "Brand", name: "brand", type: "text" },
+                { label: "Model", name: "model", type: "text" },
+                { label: "Year", name: "year", type: "number" },
+                { label: "Seats", name: "seats", type: "number" },
+                { label: "Price / day", name: "pricePerDay", type: "number" },
+                { label: "Color", name: "color", type: "text" },
+                { label: "Mileage", name: "mileage", type: "number" },
+              ].map(({ label, name, type }) => (
+                <Field key={name} label={label}>
+                  <Input
+                    type={type}
+                    value={formData[name]}
+                    onChange={(e) => handleChange(name, e.target.value)}
+                    className="bg-white/5 border border-white/20 text-white placeholder:text-white/50 focus:ring-1 focus:ring-[#C8A78E]"
+                  />
+                </Field>
+              ))}
+
+              {/* Transmission */}
+              <Field label="Transmission">
+                <Select
+                  value={formData.transmission}
+                  onValueChange={(v) => handleChange("transmission", v)}
+                >
+                  <SelectTrigger className={selectClass}>
+                    <SelectValue placeholder="Select Transmission" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] border border-white/20 text-white">
+                    {transmissionOptions.map((t) => (
+                      <SelectItem
+                        key={t.value}
+                        value={t.value}
+                        className={selectItemClass}
+                      >
+                        {t.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
-            ))}
 
-            {/* Transmission */}
-            <Field label="Transmission">
-              <Select
-                value={formData.transmission}
-                onValueChange={(v) => handleChange("transmission", v)}
-              >
-                <SelectTrigger className={selectClass}>
-                  <SelectValue placeholder="Select Transmission" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#1a1a1a] border border-white/20 text-white rounded-md shadow-lg">
-                  {transmissionOptions.map((t) => (
-                    <SelectItem
-                      key={t.value}
-                      value={t.value}
-                      className={selectItemClass}
-                    >
-                      {t.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+              {/* Fuel */}
+              <Field label="Fuel Type">
+                <Select
+                  value={formData.fuelType}
+                  onValueChange={(v) => handleChange("fuelType", v)}
+                >
+                  <SelectTrigger className={selectClass}>
+                    <SelectValue placeholder="Select Fuel Type" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] border border-white/20 text-white">
+                    {fuelOptions.map((f) => (
+                      <SelectItem
+                        key={f.value}
+                        value={f.value}
+                        className={selectItemClass}
+                      >
+                        {f.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
 
-            {/* Fuel */}
-            <Field label="Fuel Type">
-              <Select
-                value={formData.fuelType}
-                onValueChange={(v) => handleChange("fuelType", v)}
-              >
-                <SelectTrigger className={selectClass}>
-                  <SelectValue placeholder="Select Fuel Type" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#1a1a1a] border border-white/20 text-white rounded-md shadow-lg">
-                  {fuelOptions.map((f) => (
-                    <SelectItem
-                      key={f.value}
-                      value={f.value}
-                      className={selectItemClass}
-                    >
-                      {f.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+              {/* Category */}
+              <Field label="Category">
+                <Select
+                  value={formData.category}
+                  onValueChange={(v) => handleChange("category", v)}
+                >
+                  <SelectTrigger className={selectClass}>
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] border border-white/20 text-white">
+                    {categoryOptions.map((c) => (
+                      <SelectItem
+                        key={c.value}
+                        value={c.value}
+                        className={selectItemClass}
+                      >
+                        {c.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
 
-            {/* Category */}
-            <Field label="Category">
-              <Select
-                value={formData.category}
-                onValueChange={(v) => handleChange("category", v)}
-              >
-                <SelectTrigger className={selectClass}>
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#1a1a1a] border border-white/20 text-white rounded-md shadow-lg">
-                  {categoryOptions.map((c) => (
-                    <SelectItem
-                      key={c.value}
-                      value={c.value}
-                      className={selectItemClass}
-                    >
-                      {c.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+              {/* Air Conditioning */}
+              <Field label="Air Conditioning">
+                <label className="relative flex items-center cursor-pointer mt-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.airConditioning}
+                    onChange={(e) =>
+                      handleChange("airConditioning", e.target.checked)
+                    }
+                    className="sr-only peer"
+                  />
 
-            {/* Air Conditioning */}
-            <Field label="Air Conditioning">
-              <label className="relative flex items-center cursor-pointer mt-2">
-                <input
-                  type="checkbox"
-                  checked={formData.airConditioning}
-                  onChange={(e) =>
-                    handleChange("airConditioning", e.target.checked)
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-12 h-6 rounded-full transition-colors peer-checked:bg-[#13e88c] bg-gray-500" />
-                <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform peer-checked:translate-x-6" />
-              </label>
-            </Field>
-          </div>
+                  <div className="w-12 h-6 rounded-full bg-gray-500 peer-checked:bg-[#13e88c] transition-colors" />
 
-          {/* --- Images Section --- */}
-          <div className="mt-6 md:col-span-2 space-y-3">
-            <div className="text-sm font-medium font-serif">Images</div>
-
-            <div
-              className="flex items-center justify-center p-4 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-[#C8A78E] transition-colors"
-              onClick={() => document.getElementById("image-upload").click()}
-            >
-              <span className="text-white/70">
-                Click or drag to upload images
-              </span>
-              <input
-                id="image-upload"
-                type="file"
-                multiple
-                onChange={handleImageChange}
-                className="hidden"
-              />
+                  <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-6" />
+                </label>
+              </Field>
             </div>
 
-            {previewImages.length > 0 && (
-              <div className="grid grid-cols-4 gap-3 mt-2 overflow-x-auto">
-                {previewImages.map((url, i) => (
-                  <div
-                    key={i}
-                    className="relative h-24 w-28 rounded-md overflow-hidden border border-white/20"
-                  >
-                    <img
-                      src={url}
-                      className="h-full w-full object-cover"
-                      alt=""
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(i)}
-                      className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
+            {/* Divider */}
+            <div className="border-t border-white/10 pt-4" />
+
+            {/* Images */}
+            <div className="space-y-3">
+              <div className="text-sm font-medium text-white">Images</div>
+
+              <div
+                className="flex items-center justify-center h-28 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-[#C8A78E] transition"
+                onClick={() => document.getElementById("image-upload").click()}
+              >
+                <span className="text-white/60 text-sm">
+                  Click or drag images here
+                </span>
+
+                <input
+                  id="image-upload"
+                  type="file"
+                  multiple
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
               </div>
-            )}
-          </div>
 
-          {/* --- Action Buttons --- */}
-          <div className="flex justify-end gap-4 mt-8">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              className="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 hover:scale-105 transition-all duration-200 shadow-lg rounded-3xl px-6 py-2"
-            >
-              Cancel
-            </Button>
+              {previewImages.length > 0 && (
+                <div className="grid grid-cols-4 gap-3">
+                  {previewImages.map((url, i) => (
+                    <div
+                      key={i}
+                      className="relative h-24 rounded-md overflow-hidden border border-white/20 group"
+                    >
+                      <img src={url} className="w-full h-full object-cover" />
 
-            <Button
-              onClick={handleSubmit}
-              className="bg-[#C8A78E]/80 backdrop-blur-md border border-white/20 text-black hover:bg-[#C8A78E]/100 hover:scale-105 transition-all duration-200 shadow-lg rounded-3xl px-6 py-2"
-            >
-              Save Changes
-            </Button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(i)}
+                        className="absolute top-1 right-1 bg-black/70 text-white rounded-full w-6 h-6 opacity-0 group-hover:opacity-100 transition"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="border-white/20 text-black hover:bg-white/80"
+              >
+                Cancel
+              </Button>
+
+              <Button
+                onClick={handleSubmit}
+                className="bg-[#C8A78E] text-black hover:bg-[#C8A78E]/90"
+              >
+                Save Changes
+              </Button>
+            </div>
           </div>
         </ScrollArea>
       </DialogContent>
